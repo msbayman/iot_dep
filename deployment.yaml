@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: wil-playground
   namespace: dev
+  labels:
+    app: wil-playground
 spec:
   replicas: 1
   selector:
@@ -14,7 +16,27 @@ spec:
         app: wil-playground
     spec:
       containers:
-        - name: playground
-          image: wil42/playground:v1
-          ports:
-            - containerPort: 8888
+      - name: playground
+        image: wil42/playground:v1  # Change this to v2 to trigger GitOps update
+        ports:
+        - containerPort: 8888
+          name: http
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8888
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8888
+          initialDelaySeconds: 5
+          periodSeconds: 5
