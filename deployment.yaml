@@ -15,8 +15,24 @@ spec:
         app: wil-playground
     spec:
       containers:
-      - name: playground
-        image: wil42/playground:v2
-        ports:
-        - containerPort: 8888
-          name: http
+        - name: playground
+          image: wil42/playground:v2
+          ports:
+            - containerPort: 8888
+              name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wil-playground
+  labels:
+    app: wil-playground
+spec:
+  selector:
+    app: wil-playground
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8888
+      targetPort: 8888
+  type: NodePort
